@@ -35,7 +35,7 @@
       chdir: /tmp/thingsboard/minikube
     tags: deployTb
 
-  - name: Run Thingsboard Installation
+  - name: Install Third Party Resources
     shell: "./k8s-deploy-thirdparty.sh"
     args:
       chdir: /tmp/thingsboard/minikube
