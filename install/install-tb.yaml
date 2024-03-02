@@ -40,3 +40,6 @@
     args:
       chdir: /tmp/thingsboard/minikube
     tags: deployTb
+
+  - name: Wait for Thingsboard to be ready
+    shell: "kubectl wait --namespace thingsboard --for=condition=ready pod --selector=app=tb-web-ui --timeout=90s"
