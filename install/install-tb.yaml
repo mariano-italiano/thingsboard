@@ -1,0 +1,18 @@
+- name: Install Thingsboard on Kubernetes KinD
+  hosts: localhost
+  tasks:
+
+  - name: KinD Prerequisites
+    shell: "sh /root/thingsboard/install/kind-prereq.sh"
+
+  - name: KinD Installation
+    shell: "sh /root/thingsboard/install/kind-install.sh"
+
+  - name: Deploy NGINX Ingress
+    shell: "sh /root/thingsboard/install/deploy-ingress.sh"
+
+  - name: Deploy ArgoCD
+    shell: "sh /root/thingsboard/install/deploy-argocd.sh"
+
+  - name: Expose ArgoCD with NGINX Ingress
+    shell: "kubectl apply -f ingress.yaml"
