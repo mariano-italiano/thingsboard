@@ -4,11 +4,11 @@
 
   - name: KinD Prerequisites
     shell: "sh /root/thingsboard/install/kind-prereq.sh"
-    tags: prereq
+    tags: installKind
 
   - name: KinD Installation
     shell: "sh /root/thingsboard/install/kind-install.sh"
-    tags: install
+    tags: installKind
 
   - name: Deploy NGINX Ingress
     shell: "sh /root/thingsboard/install/deploy-ingress.sh"
@@ -20,4 +20,23 @@
 
   - name: Expose ArgoCD with NGINX Ingress
     shell: "kubectl apply -f ingress.yaml"
-    tags: exposeArgocd
+    tags: deployArgocd
+
+  - name: Clone Thingsboard Git Repository
+    git:
+      repo: https://github.com/thingsboard/thingsboard-ce-k8s.git
+      version: release-3.6.2
+      dest: /tmp/thingsboard
+    tags: deployTb
+
+  - name: Run Thingsboard Installation
+    shell: "./k8s-install-tb.sh"
+    args:
+      chdir: /tmp/thingsboard/minikube
+    tags: deployTb
+
+  - name: Deploy Thingsboard Resources
+    shell: "./k8s-deploy-resources.sh"
+    args:
+      chdir: /tmp/thingsboard/minikube
+    tags: deployTb
