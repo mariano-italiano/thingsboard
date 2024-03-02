@@ -75,10 +75,10 @@ fi
 echo
 
 if [[ ! -z "$KIND_CLUSTER" ]]; then
-        echo -e "KIND CLUSTER CREATION \t\t\t\t [ \033[32mSUCCESS\033[0m ]"
+        echo -e "KIND CLUSTER CREATION \t\t\t\t\t [ \033[32mSUCCESS\033[0m ]"
         echo "KIND CLUSTER: $KIND_CLUSTER"
 else
-        echo -e "KIND CLUSTER CREATION \t\t\t\t [ \033[31mFAILED\033[0m  ]"
+        echo -e "KIND CLUSTER CREATION \t\t\t\t\t [ \033[31mFAILED\033[0m  ]"
 fi
 
 echo
