@@ -4,15 +4,20 @@
 
   - name: KinD Prerequisites
     shell: "sh /root/thingsboard/install/kind-prereq.sh"
+    tags: prereq
 
   - name: KinD Installation
     shell: "sh /root/thingsboard/install/kind-install.sh"
+    tags: install
 
   - name: Deploy NGINX Ingress
     shell: "sh /root/thingsboard/install/deploy-ingress.sh"
+    tags: deployIngress
 
   - name: Deploy ArgoCD
     shell: "sh /root/thingsboard/install/deploy-argocd.sh"
+    tags: deployArgocd
 
   - name: Expose ArgoCD with NGINX Ingress
     shell: "kubectl apply -f ingress.yaml"
+    tags: exposeArgocd
