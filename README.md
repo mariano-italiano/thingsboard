@@ -8,6 +8,7 @@ Repo for thingsboard carport project
 Login via SSH to Linux (as `root`)and execute below command:
 ```sh
 git clone https://github.com/mariano-italiano/thingsboard.git
+cd thingsboard/
 ```
 
 ### Install Ansible
