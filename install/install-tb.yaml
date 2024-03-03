@@ -19,7 +19,7 @@
     tags: deployArgocd
 
   - name: Expose ArgoCD with NGINX Ingress
-    shell: "kubectl apply -f ingress.yaml"
+    shell: "kubectl apply -f /root/thingsboard/install/ingress.yaml"
     tags: deployArgocd
 
   - name: Clone Thingsboard Git Repository
