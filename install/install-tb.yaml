@@ -30,7 +30,7 @@
     tags: deployTb
 
   - name: Run Thingsboard Installation
-    shell: "./k8s-install-tb.sh"
+    shell: "./k8s-install-tb.sh --loadDemo"
     args:
       chdir: /tmp/thingsboard/minikube
     tags: deployTb
