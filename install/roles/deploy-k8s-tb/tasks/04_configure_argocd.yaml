@@ -49,7 +49,7 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata: 
-        name: "thingsboard-postgress"
+        name: "thingsboard-postgres"
       spec:
         project: "default"
         source:
@@ -71,12 +71,11 @@
     var: responsePg.content
     verbosity: 3
 
-- name: Wait 1 minute let application start
-  ansible.builtin.pause:
-    minutes: 1
-
-- name: Delete installation Pod
-  ansible.builtin.shell: "kubectl delete pod tb-db-setup -n thingsboard"
+- name: Finalize DB setup
+  ansible.builtin.shell: |
+    kubectl wait --for=condition=Ready pod/tb-db-setup --timeout=120s
+    kubectl exec tb-db-setup -- sh -c 'export INSTALL_TB=true; export LOAD_DEMO=false; start-tb-node.sh; touch /tmp/install-finished;'
+    kubectl delete pod tb-db-setup
 
 - name: Create Thingsboard Thirdpaty application
   ansible.builtin.uri:
@@ -112,10 +111,6 @@
   ansible.builtin.debug:
     var: response2.content
     verbosity: 3
-
-- name: Wait 1 minute let application start
-  ansible.builtin.pause:
-    minutes: 1
 
 - name: Create Thingsboard Main application
   ansible.builtin.uri:
