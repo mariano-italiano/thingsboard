@@ -16,3 +16,7 @@
 - name: Configure ArgoCD
   ansible.builtin.import_tasks: 04_configure_argocd.yaml
   tags: configureArgocd
+
+- name: Show details to user
+  ansible.builtin.import_tasks:  05_print_details.yaml
+  tags: showDetails
