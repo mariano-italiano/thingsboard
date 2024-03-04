@@ -4,20 +4,20 @@
 
 - name: Show ArgoCD details
   ansible.builtin.debug:
-    msg: |
+    msg: 
     - "------------------------------------------------------"
     - "ArgoCD details:"
-    - "         URL: https://argocd.{{ serverIP}}.nip.io"
+    - "         URL: https://argocd.{{ serverIP.stdout }}.nip.io"
     - "    Username: admin"
     - "    Password: {{ argoDetails.stdout }}"
     - "------------------------------------------------------"
  
 - name: Show Thingsboard details
   ansible.builtin.debug:
-    msg: |
+    msg: 
     - "------------------------------------------------------"
     - "Thingsboard details:"
-    - "         URL: https://thingsboard.{{ serverIP}}.nip.io"
+    - "         URL: https://thingsboard.{{ serverIP.stdout }}.nip.io"
     - "    Username: sysadmin@thingsboard.org"
     - "    Password: sysadmin"
     - "------------------------------------------------------"
