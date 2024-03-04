@@ -75,6 +75,9 @@
   ansible.builtin.pause:
     minutes: 1
 
+- name: Delete installation Pod
+  ansible.builtin.shell: "kubectl delete pod tb-db-setup -n thingsboard"
+
 - name: Create Thingsboard Thirdpaty application
   ansible.builtin.uri:
     url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
