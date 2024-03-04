@@ -1,0 +1,70 @@
+---
+- name: Get credentials
+  ansible.builtin.shell: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+  register: getArgoSecret
+  
+- name: Set fact
+  ansible.builtin.set_fact:
+    argoPassword: "{{ getArgoSecret.stdout }}"
+  no_log: true
+
+- name: List Network Interfaces
+  ansible.builtin.shell: "ip addr show | grep '^[0-9]' | awk '{print $2}' | sed 's/://' | grep ^e"
+  register: interfaceResult
+
+- name: Get IP Addresses
+  ansible.builtin.shell: "ip addr show {{ interfaceResult.stdout }} | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+  register: serverIP
+
+- name: Create token
+  ansible.builtin.uri:
+    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/session
+    method: POST
+    validate_certs: false
+    body_format: json
+    status_code: 200
+    return_content: true
+    headers:
+      Content-Type: application/json
+    body:
+      username: admin
+      password: "{{ argoPassword }}"
+  register: token
+
+- name: Save token
+  ansible.builtin.set_fact:
+    bearerToken: "{{ token.json.token }}"
+
+- name: Create application
+  ansible.builtin.uri:
+    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
+    method: POST
+    validate_certs: false
+    body_format: json
+    status_code: 200
+    return_content: true
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ bearerToken }}"
+    body:
+      metadata: 
+        name: "tb-postgress"
+      spec:
+        project: "default"
+        source:
+          repoURL: "https://github.com/mariano-italiano/thingsboard.git"
+          targetRevision: "master"
+          path: "argocd-tb-postgres"
+        destination:
+          namespace: "thingsboard"
+          server: "https://kubernetes.default.svc"
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+          syncOptions: ["CreateNamespace=true"]
+  register: response
+
+- name: Display API response
+  debug:
+    var: response.content

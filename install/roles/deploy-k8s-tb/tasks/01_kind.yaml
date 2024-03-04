@@ -1,0 +1,6 @@
+- name: KinD Prerequisites
+  ansible.builtin.shell: "sh {{ role_path }}/files/kind-prereq.sh"
+
+- name: KinD Installation
+  ansible.builtin.shell: "sh {{ role_path }}/files/kind-install.sh"
+

@@ -2,51 +2,8 @@
   hosts: localhost
   tasks:
 
-  - name: KinD Prerequisites
-    shell: "sh /root/thingsboard/install/kind-prereq.sh"
-    tags: installKind
-
-  - name: KinD Installation
-    shell: "sh /root/thingsboard/install/kind-install.sh"
-    tags: installKind
-
-  - name: Deploy NGINX Ingress
-    shell: "sh /root/thingsboard/install/deploy-ingress.sh"
-    tags: deployIngress
-
-  - name: Deploy ArgoCD
-    shell: "sh /root/thingsboard/install/deploy-argocd.sh"
-    tags: deployArgocd
-
-  - name: Expose ArgoCD with NGINX Ingress
-    shell: "kubectl apply -f /root/thingsboard/install/ingress-argocd.yaml"
-    tags: deployArgocd
-
-  - name: Clone Thingsboard Git Repository
-    git:
-      repo: https://github.com/thingsboard/thingsboard-ce-k8s.git
-      version: release-3.6.2
-      dest: /tmp/thingsboard
-    tags: deployTb
-
-  - name: Run Thingsboard Installation
-    shell: "./k8s-install-tb.sh --loadDemo"
-    args:
-      chdir: /tmp/thingsboard/minikube
-    tags: deployTb
-
-  - name: Install Third Party Resources
-    shell: "./k8s-deploy-thirdparty.sh"
-    args:
-      chdir: /tmp/thingsboard/minikube
-    tags: deployTb
-    
-  - name: Deploy Thingsboard Resources
-    shell: "./k8s-deploy-resources.sh"
-    args:
-      chdir: /tmp/thingsboard/minikube
-    tags: deployTb
-
-  - name: Wait for Thingsboard to be ready
-    shell: "kubectl wait --namespace thingsboard --for=condition=ready pod --selector=app=tb-node --timeout=90s"
-    tags: deployTb
+  - name: "Running role deploy-k8s-tb"
+    include_role:
+      name: deploy-k8s-tb
+    tags: configureArgocd
+  

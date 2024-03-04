@@ -1,0 +1,6 @@
+- name: Deploy ArgoCD
+  ansible.builtin.shell: "sh {{ role_path }}/files/deploy-argocd.sh"
+
+- name: Expose ArgoCD with NGINX Ingress
+  ansible.builtin.shell: "kubectl apply -f {{ role_path }}/files/ingress-argocd.yaml"
+

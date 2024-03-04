@@ -1,0 +1,18 @@
+---
+# tasks file for deploy-k8s-tb
+
+- name: Install KinD
+  ansible.builtin.import_tasks: 01_kind.yaml
+  tags: installKind
+
+- name: Deploy Ingress
+  ansible.builtin.import_tasks: 02_ingress_nginx.yaml
+  tags: deployIngress
+
+- name: Deploy ArgoCD
+  ansible.builtin.import_tasks: 03_deploy_argocd.yaml
+  tags: deployArgocd
+
+- name: Configure ArgoCD
+  ansible.builtin.import_tasks: 04_configure_argocd.yaml
+  tags: configureArgocd
