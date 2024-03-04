@@ -71,10 +71,14 @@
     var: responsePg.content
     verbosity: 3
 
+- name: Wait 30 seconds and let application start
+  ansible.builtin.pause:
+    seconds: 30
+
 - name: Finalize DB setup
   ansible.builtin.shell: |
     kubectl wait --for=condition=Ready pod/tb-db-setup --timeout=120s
-    kubectl exec tb-db-setup -- sh -c 'export INSTALL_TB=true; export LOAD_DEMO=false; start-tb-node.sh; touch /tmp/install-finished;'
+    kubectl exec tb-db-setup -- sh -c 'export INSTALL_TB=true; export LOAD_DEMO=true; start-tb-node.sh; touch /tmp/install-finished;'
     kubectl delete pod tb-db-setup
 
 - name: Create Thingsboard Thirdpaty application

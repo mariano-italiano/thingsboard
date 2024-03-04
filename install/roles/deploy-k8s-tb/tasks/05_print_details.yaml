@@ -1,0 +1,23 @@
+- name: Get ArgoCD details
+  ansible.builtin.shell: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+  register: argoDetails
+
+- name: Show ArgoCD details
+  ansible.builtin.debug:
+    msg: |
+    - "------------------------------------------------------"
+    - "ArgoCD details:"
+    - "         URL: https://argocd.{{ serverIP}}.nip.io"
+    - "    Username: admin"
+    - "    Password: {{ argoDetails.stdout }}"
+    - "------------------------------------------------------"
+ 
+- name: Show Thingsboard details
+  ansible.builtin.debug:
+    msg: |
+    - "------------------------------------------------------"
+    - "Thingsboard details:"
+    - "         URL: https://thingsboard.{{ serverIP}}.nip.io"
+    - "    Username: sysadmin@thingsboard.org"
+    - "    Password: sysadmin"
+    - "------------------------------------------------------"
