@@ -35,4 +35,4 @@ The playbook above will proceed with following tasks:
   - create postgress application
   - create thirdparty application
   - create Thingsboard application
-
+- show post installation details for user
