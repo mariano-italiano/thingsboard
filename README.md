@@ -31,8 +31,8 @@ The playbook above will proceed with following tasks:
 - deploy NGINX Ingress on top of K8s cluster
 - deploy ArgoCD within K8s cluster
 - expose the ArgoCD via NGINX Ingress
-- clone Thingsboard git repository
-- run Thingsboard installation
-- install thirdparty resources
-- deploy Thingsboard resources
-- expose Thingsboard web (pending/todo)
+- configure 3 ArgoCD applications to fully deploy ThingsBoard on Kubernetes
+  - create postgress application
+  - create thirdparty application
+  - create Thingsboard application
+
