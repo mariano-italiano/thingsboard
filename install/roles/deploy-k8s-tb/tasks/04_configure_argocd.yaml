@@ -34,8 +34,9 @@
 - name: Save token
   ansible.builtin.set_fact:
     bearerToken: "{{ token.json.token }}"
+  no_log: true
 
-- name: Create application
+- name: Create Thingsboard Postgress application
   ansible.builtin.uri:
     url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
     method: POST
@@ -48,7 +49,7 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata: 
-        name: "tb-postgress"
+        name: "thingsboard-postgress"
       spec:
         project: "default"
         source:
@@ -63,8 +64,87 @@
             prune: true
             selfHeal: true
           syncOptions: ["CreateNamespace=true"]
-  register: response
+  register: responsePg
 
 - name: Display API response
-  debug:
-    var: response.content
+  ansible.builtin.debug:
+    var: responsePg.content
+    verbosity: 3
+
+- name: Wait 1 minute let application start
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Create Thingsboard Thirdpaty application
+  ansible.builtin.uri:
+    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
+    method: POST
+    validate_certs: false
+    body_format: json
+    status_code: 200
+    return_content: true
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ bearerToken }}"
+    body:
+      metadata:
+        name: "thingsboard-thirdparty"
+      spec:
+        project: "default"
+        source:
+          repoURL: "https://github.com/mariano-italiano/thingsboard.git"
+          targetRevision: "master"
+          path: "argocd-tb-thirdparty"
+        destination:
+          namespace: "thingsboard"
+          server: "https://kubernetes.default.svc"
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+          syncOptions: ["CreateNamespace=true"]
+  register: response2
+
+- name: Display API response
+  ansible.builtin.debug:
+    var: response2.content
+    verbosity: 3
+
+- name: Wait 1 minute let application start
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Create Thingsboard Main application
+  ansible.builtin.uri:
+    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
+    method: POST
+    validate_certs: false
+    body_format: json
+    status_code: 200
+    return_content: true
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ bearerToken }}"
+    body:
+      metadata:
+        name: "thingsboard"
+      spec:
+        project: "default"
+        source:
+          repoURL: "https://github.com/mariano-italiano/thingsboard.git"
+          targetRevision: "master"
+          path: "argocd-tb"
+        destination:
+          namespace: "thingsboard"
+          server: "https://kubernetes.default.svc"
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+          syncOptions: ["CreateNamespace=true"]
+  register: response3
+
+- name: Display API response
+  ansible.builtin.debug:
+    var: response3.content
+    verbosity: 3
