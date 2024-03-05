@@ -2,7 +2,7 @@
 # defaults file for deploy-k8s-tb
 
 ARGOCD_TB_PG_APPNAME: "thingsboard-postgres"
-ARGOCD-TB_TP_APPNAME: "thingsboard-thirdparty"
+ARGOCD_TB_TP_APPNAME: "thingsboard-thirdparty"
 ARGOCD_TB_APPNAME: "thingsboard"
 ARGOCD_PROJECT: "default"
 ARGOCD_GIT_URL: "https://github.com/mariano-italiano/thingsboard.git"
