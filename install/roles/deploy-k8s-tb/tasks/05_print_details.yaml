@@ -2,12 +2,24 @@
   ansible.builtin.shell: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
   register: argoDetails
 
+- name: List Network Interfaces
+  ansible.builtin.shell: "ip addr show | grep '^[0-9]' | awk '{print $2}' | sed 's/://' | grep ^e"
+  register: interfaceResult
+
+- name: Get IP Addresses
+  ansible.builtin.shell: "ip addr show {{ interfaceResult.stdout }} | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+  register: output
+
+- name: Save IP Address
+  ansible.builtin.set_fact:
+    serverIP: "{{ output.stdout }}"
+
 - name: Show ArgoCD details
   ansible.builtin.debug:
     msg: 
     - "------------------------------------------------------"
     - "ArgoCD details:"
-    - "         URL: https://argocd.{{ serverIP.stdout }}.nip.io"
+    - "         URL: https://argocd.{{ serverIP }}.nip.io"
     - "    Username: admin"
     - "    Password: {{ argoDetails.stdout }}"
     - "------------------------------------------------------"
@@ -17,7 +29,7 @@
     msg: 
     - "------------------------------------------------------"
     - "Thingsboard details:"
-    - "         URL: https://thingsboard.{{ serverIP.stdout }}.nip.io"
+    - "         URL: https://thingsboard.{{ serverIP }}.nip.io"
     - "    Username: sysadmin@thingsboard.org"
     - "    Password: sysadmin"
     - "------------------------------------------------------"
