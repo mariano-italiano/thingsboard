@@ -20,6 +20,10 @@
   ansible.builtin.set_fact:
     serverIP: "{{ output.stdout }}"
 
+- name: Wait for service to be up
+  ansible.builtin.pause:
+    seconds: 30
+
 - name: Create token
   ansible.builtin.uri:
     url: https://argocd.{{ serverIP }}.nip.io/api/v1/session
@@ -53,16 +57,16 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata: 
-        name: "{{ ARGOCD-TB-PG-APPNAME }}"
+        name: "{{ ARGOCD_TB_PG_APPNAME }}"
       spec:
-        project: "{{ ARGOCD-PROJECT }}"
+        project: "{{ ARGOCD_PROJECT }}"
         source:
-          repoURL: "{{ ARGOCD-GIT-URL }}"
-          targetRevision: "{{ ARGOCD-GIT-BRANCH }}"
-          path: "{{ ARGOCD-TB-PG-GIT-PATH }}"
+          repoURL: "{{ ARGOCD_GIT_URL }}"
+          targetRevision: "{{ ARGOCD_GIT_BRANCH }}"
+          path: "{{ ARGOCD_TB_PG_GIT_PATH }}"
         destination:
-          namespace: "{{ ARGOCD-TB-NAMESPACE }}"
-          server: "{{ ARGOCD-K8S-SERVER }}"
+          namespace: "{{ ARGOCD_TB_NAMESPACE }}"
+          server: "{{ ARGOCD_K8S_SERVER }}"
         syncPolicy:
           automated:
             prune: true
@@ -98,16 +102,16 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata:
-        name: "{{ ARGOCD-TB-TP-APPNAME }}"
+        name: "{{ ARGOCD_TB_TP_APPNAME }}"
       spec:
-        project: "{{ ARGOCD-PROJECT }}"
+        project: "{{ ARGOCD_PROJECT }}"
         source:
-          repoURL: "{{ ARGOCD-GIT-URL }}"
-          targetRevision: "{{ ARGOCD-GIT-BRANCH }}"
-          path: "{{ ARGOCD-TB-TP-GIT-PATH }}"
+          repoURL: "{{ ARGOCD_GIT_URL }}"
+          targetRevision: "{{ ARGOCD_GIT_BRANCH }}"
+          path: "{{ ARGOCD_TB_TP_GIT_PATH }}"
         destination:
-          namespace: "{{ ARGOCD-TB-NAMESPACE }}"
-          server: "{{ ARGOCD-K8S-SERVER }}"
+          namespace: "{{ ARGOCD_TB_NAMESPACE }}"
+          server: "{{ ARGOCD_K8S_SERVER }}"
         syncPolicy:
           automated:
             prune: true
@@ -133,16 +137,16 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata:
-        name: "{{ ARGOCD-TB-APPNAME }}"
+        name: "{{ ARGOCD_TB_APPNAME }}"
       spec:
-        project: "{{ ARGOCD-PROJECT }}"
+        project: "{{ ARGOCD_PROJECT }}"
         source:
-          repoURL: "{{ ARGOCD-GIT-URL }}"
-          targetRevision: "{{ ARGOCD-GIT-BRANCH }}"
-          path: "{{ ARGOCD-TB-GIT-PATH }}"
+          repoURL: "{{ ARGOCD_GIT_URL }}"
+          targetRevision: "{{ ARGOCD_GIT_BRANCH }}"
+          path: "{{ ARGOCD_TB_GIT_PATH }}"
         destination:
-          namespace: "{{ ARGOCD-TB-NAMESPACE }}"
-          server: "{{ ARGOCD-K8S-SERVER }}"
+          namespace: "{{ ARGOCD_TB_NAMESPACE }}"
+          server: "{{ ARGOCD_K8S_SERVER }}"
         syncPolicy:
           automated:
             prune: true
