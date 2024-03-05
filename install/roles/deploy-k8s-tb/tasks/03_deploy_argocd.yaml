@@ -1,6 +1,23 @@
 - name: Deploy ArgoCD
   ansible.builtin.shell: "sh {{ role_path }}/files/deploy-argocd.sh"
 
+- name: List Network Interfaces
+  ansible.builtin.shell: "ip addr show | grep '^[0-9]' | awk '{print $2}' | sed 's/://' | grep ^e"
+  register: interfaceResult
+
+- name: Get IP Addresses
+  ansible.builtin.shell: "ip addr show {{ interfaceResult.stdout }} | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+  register: output
+
+- name: Save IP Address
+  ansible.builtin.set_fact:
+    serverIP: "{{ output.stdout }}"
+
+- name: Prepare Ingress YAML file
+  ansible.builtin.template:
+    src: ingress-argocd.j2
+    dest: ingress-argocd.yaml
+
 - name: Expose ArgoCD with NGINX Ingress
   ansible.builtin.shell: "kubectl apply -f {{ role_path }}/files/ingress-argocd.yaml"
 

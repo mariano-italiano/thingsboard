@@ -1,6 +1,18 @@
 - name: KinD Prerequisites
   ansible.builtin.shell: "sh {{ role_path }}/files/kind-prereq.sh"
 
+- name: List Network Interfaces
+  ansible.builtin.shell: "ip addr show | grep '^[0-9]' | awk '{print $2}' | sed 's/://' | grep ^e"
+  register: interfaceResult
+
+- name: Get IP Addresses
+  ansible.builtin.shell: "ip addr show {{ interfaceResult.stdout }} | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+  register: output
+
+- name: Save IP Address
+  ansible.builtin.set_fact:
+    serverIP: "{{ output.stdout }}"
+
 - name: KinD Installation
-  ansible.builtin.shell: "sh {{ role_path }}/files/kind-install.sh"
+  ansible.builtin.shell: "sh {{ role_path }}/files/kind-install.sh {{ serverIP }}"
 

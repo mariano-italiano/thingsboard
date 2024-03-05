@@ -14,11 +14,15 @@
 
 - name: Get IP Addresses
   ansible.builtin.shell: "ip addr show {{ interfaceResult.stdout }} | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
-  register: serverIP
+  register: output
+
+- name: Save IP Address
+  ansible.builtin.set_fact:
+    serverIP: "{{ output.stdout }}"
 
 - name: Create token
   ansible.builtin.uri:
-    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/session
+    url: https://argocd.{{ serverIP }}.nip.io/api/v1/session
     method: POST
     validate_certs: false
     body_format: json
@@ -38,7 +42,7 @@
 
 - name: Create Thingsboard Postgress application
   ansible.builtin.uri:
-    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
+    url: https://argocd.{{ serverIP }}.nip.io/api/v1/applications
     method: POST
     validate_certs: false
     body_format: json
@@ -49,16 +53,16 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata: 
-        name: "thingsboard-postgres"
+        name: "{{ ARGOCD-TB-PG-APPNAME }}"
       spec:
-        project: "default"
+        project: "{{ ARGOCD-PROJECT }}"
         source:
-          repoURL: "https://github.com/mariano-italiano/thingsboard.git"
-          targetRevision: "master"
-          path: "argocd-tb-postgres"
+          repoURL: "{{ ARGOCD-GIT-URL }}"
+          targetRevision: "{{ ARGOCD-GIT-BRANCH }}"
+          path: "{{ ARGOCD-TB-PG-GIT-PATH }}"
         destination:
-          namespace: "thingsboard"
-          server: "https://kubernetes.default.svc"
+          namespace: "{{ ARGOCD-TB-NAMESPACE }}"
+          server: "{{ ARGOCD-K8S-SERVER }}"
         syncPolicy:
           automated:
             prune: true
@@ -77,13 +81,13 @@
 
 - name: Finalize DB setup
   ansible.builtin.shell: |
-    kubectl wait --for=condition=Ready pod/tb-db-setup --timeout=120s
-    kubectl exec tb-db-setup -- sh -c 'export INSTALL_TB=true; export LOAD_DEMO=true; start-tb-node.sh; touch /tmp/install-finished;'
-    kubectl delete pod tb-db-setup
+    kubectl -n thingsboard wait --for=condition=Ready pod/tb-db-setup --timeout=120s
+    kubectl -n thingsboard exec tb-db-setup -- sh -c 'export INSTALL_TB=true; export LOAD_DEMO=true; start-tb-node.sh; touch /tmp/install-finished;'
+    kubectl -n thingsboard delete pod tb-db-setup
 
 - name: Create Thingsboard Thirdpaty application
   ansible.builtin.uri:
-    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
+    url: https://argocd.{{ serverIP }}.nip.io/api/v1/applications
     method: POST
     validate_certs: false
     body_format: json
@@ -94,16 +98,16 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata:
-        name: "thingsboard-thirdparty"
+        name: "{{ ARGOCD-TB-TP-APPNAME }}"
       spec:
-        project: "default"
+        project: "{{ ARGOCD-PROJECT }}"
         source:
-          repoURL: "https://github.com/mariano-italiano/thingsboard.git"
-          targetRevision: "master"
-          path: "argocd-tb-thirdparty"
+          repoURL: "{{ ARGOCD-GIT-URL }}"
+          targetRevision: "{{ ARGOCD-GIT-BRANCH }}"
+          path: "{{ ARGOCD-TB-TP-GIT-PATH }}"
         destination:
-          namespace: "thingsboard"
-          server: "https://kubernetes.default.svc"
+          namespace: "{{ ARGOCD-TB-NAMESPACE }}"
+          server: "{{ ARGOCD-K8S-SERVER }}"
         syncPolicy:
           automated:
             prune: true
@@ -118,7 +122,7 @@
 
 - name: Create Thingsboard Main application
   ansible.builtin.uri:
-    url: https://argocd.{{ serverIP.stdout }}.nip.io/api/v1/applications
+    url: https://argocd.{{ serverIP }}.nip.io/api/v1/applications
     method: POST
     validate_certs: false
     body_format: json
@@ -129,16 +133,16 @@
       Authorization: "Bearer {{ bearerToken }}"
     body:
       metadata:
-        name: "thingsboard"
+        name: "{{ ARGOCD-TB-APPNAME }}"
       spec:
-        project: "default"
+        project: "{{ ARGOCD-PROJECT }}"
         source:
-          repoURL: "https://github.com/mariano-italiano/thingsboard.git"
-          targetRevision: "master"
-          path: "argocd-tb"
+          repoURL: "{{ ARGOCD-GIT-URL }}"
+          targetRevision: "{{ ARGOCD-GIT-BRANCH }}"
+          path: "{{ ARGOCD-TB-GIT-PATH }}"
         destination:
-          namespace: "thingsboard"
-          server: "https://kubernetes.default.svc"
+          namespace: "{{ ARGOCD-TB-NAMESPACE }}"
+          server: "{{ ARGOCD-K8S-SERVER }}"
         syncPolicy:
           automated:
             prune: true

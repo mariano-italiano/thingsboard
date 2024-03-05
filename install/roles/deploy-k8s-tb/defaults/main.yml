@@ -1,3 +1,14 @@
 ---
 # defaults file for deploy-k8s-tb
 
+ARGOCD-TB-PG-APPNAME: "thingsboard-postgres"
+ARGOCD-TB-TP-APPNAME: "thingsboard-thirdparty"
+ARGOCD-TB-APPNAME: "thingsboard"
+ARGOCD-PROJECT: "default"
+ARGOCD-GIT-URL: "https://github.com/mariano-italiano/thingsboard.git"
+ARGOCD-GIT-BRANCH: "master"
+ARGOCD-TB-PG-GIT-PATH: "argocd-tb-postgres"
+ARGOCD-TB-TP-GIT-PATH: "argocd-tb-thirdparty"
+ARGOCD-TB-GIT-PATH: "argocd-tb"
+ARGOCD-TB-NAMESPACE: "thingsboard"
+ARGOCD-K8S-SERVER: "https://kubernetes.default.svc"
