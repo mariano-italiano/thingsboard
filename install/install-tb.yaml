@@ -1,9 +1,7 @@
-- name: Install Thingsboard on Kubernetes KinD
+- name: Install Thingsboard on Kubernetes K3s
   hosts: localhost
   tasks:
 
   - name: "Running role deploy-k8s-tb"
     include_role:
       name: deploy-k8s-tb
-    tags: configureArgocd
-  
