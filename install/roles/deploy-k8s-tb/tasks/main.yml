@@ -1,9 +1,9 @@
 ---
 # tasks file for deploy-k8s-tb
 
-- name: Install KinD
-  ansible.builtin.import_tasks: 01_kind.yaml
-  tags: installKind
+- name: Install K3s
+  ansible.builtin.import_tasks: 01_k3s.yaml
+  tags: installK3s
 
 - name: Deploy Ingress
   ansible.builtin.import_tasks: 02_ingress_nginx.yaml
