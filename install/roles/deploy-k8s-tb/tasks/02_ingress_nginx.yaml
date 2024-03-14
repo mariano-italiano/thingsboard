@@ -1,3 +1,2 @@
 - name: Deploy NGINX Ingress
-  ansible.builtin.shell: "sh {{ role_path }}/files/deploy-ingress.sh"
-
+  ansible.builtin.shell: "sh {{ role_path }}/files/deploy-ingress.sh {{ serverIP }}"
